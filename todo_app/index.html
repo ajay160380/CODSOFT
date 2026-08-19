@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional To-Do App</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+    
+    <div class="app-container">
+        <header>
+            <h1>My Tasks</h1>
+            <p>Stay organized and focused.</p>
+        </header>
+
+        <div class="input-container">
+            <input type="text" id="taskInput" placeholder="What needs to be done?" autocomplete="off">
+            <button id="addTaskBtn"><i class="fas fa-plus"></i></button>
+        </div>
+
+        <ul id="taskList" class="task-list">
+            <!-- Tasks will be injected here via JavaScript -->
+        </ul>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
