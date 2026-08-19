@@ -78,8 +78,8 @@ st.markdown('<p class="subtitle">Transforming raw, messy datasets into clean, ac
 # Load Data
 @st.cache_data
 def load_data():
-    raw_df = pd.read_csv('data/raw/superstore_raw.csv', encoding='cp1252')
-    clean_df = pd.read_csv('data/processed/superstore_cleaned.csv')
+    raw_df = pd.read_csv('../data/raw/superstore_raw.csv', encoding='cp1252')
+    clean_df = pd.read_csv('../data/processed/superstore_cleaned.csv')
     return raw_df, clean_df
 
 try:
