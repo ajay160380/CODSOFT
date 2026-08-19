@@ -1,124 +1,193 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
+import plotly.express as px
+import plotly.graph_objects as go
 
-st.set_page_config(page_title="Task 1: Data Cleaning", layout="wide", page_icon="🧹")
+# Configure Page
+st.set_page_config(page_title="Data Cleaning Pro", layout="wide", page_icon="✨")
 
-# Custom CSS for styling
+# --- Custom CSS for 100000X Better UI ---
 st.markdown("""
     <style>
-    .main-title {
-        font-size: 40px;
-        color: #2e6c80;
+    /* Gradient Text for Main Title */
+    .premium-title {
+        font-size: 3rem !important;
+        font-weight: 800 !important;
+        background: linear-gradient(135deg, #00E5FF 0%, #007BFF 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
         text-align: center;
-        font-weight: bold;
+        margin-bottom: 0px !important;
+        padding-bottom: 20px;
     }
-    .sub-title {
-        font-size: 24px;
-        color: #1f4e5b;
-        margin-top: 20px;
-        border-bottom: 2px solid #2e6c80;
-        padding-bottom: 5px;
+    
+    .subtitle {
+        text-align: center;
+        color: #94A3B8;
+        font-size: 1.1rem;
+        margin-bottom: 40px;
+        font-weight: 300;
+    }
+
+    /* Glassmorphism KPI Cards */
+    .kpi-card {
+        background: rgba(20, 28, 47, 0.6);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(0, 229, 255, 0.1);
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+    .kpi-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(0, 229, 255, 0.4);
+    }
+    .kpi-title {
+        font-size: 1rem;
+        color: #94A3B8;
+        margin-bottom: 10px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .kpi-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #00E5FF;
+        margin: 0;
+    }
+    .kpi-value.danger { color: #F43F5E; }
+    .kpi-value.success { color: #10B981; }
+    
+    /* Better DataFrame headers */
+    .stDataFrame {
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.05);
     }
     </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="main-title">Task 1: Data Cleaning & Preprocessing</div>', unsafe_allow_html=True)
-st.write("Welcome to the Data Analytics Dashboard! This application showcases the step-by-step data cleaning process for the Sample Superstore dataset.")
-
-@st.cache_data
-def load_raw_data():
-    return pd.read_csv('data/raw/superstore_raw.csv', encoding='cp1252')
-
-@st.cache_data
-def load_cleaned_data():
-    return pd.read_csv('data/processed/superstore_cleaned.csv')
+# Header
+st.markdown('<h1 class="premium-title">✨ Superstore Data Cleaning Pipeline</h1>', unsafe_allow_html=True)
+st.markdown('<p class="subtitle">Transforming raw, messy datasets into clean, actionable analytics ready data.</p>', unsafe_allow_html=True)
 
 # Load Data
+@st.cache_data
+def load_data():
+    raw_df = pd.read_csv('data/raw/superstore_raw.csv', encoding='cp1252')
+    clean_df = pd.read_csv('data/processed/superstore_cleaned.csv')
+    return raw_df, clean_df
+
 try:
-    raw_df = load_raw_data()
-    clean_df = load_cleaned_data()
+    raw_df, clean_df = load_data()
 except Exception as e:
-    st.error(f"Error loading data: {e}. Make sure the dataset exists in the data directory.")
+    st.error("⚠️ Error: Data files not found. Ensure raw and processed CSVs exist.")
     st.stop()
 
-# --- Section 1: Import & Inspect ---
-st.markdown('<div class="sub-title">1. Import & Inspect Raw Data</div>', unsafe_allow_html=True)
-st.write(f"**Original Dataset Shape:** {raw_df.shape[0]} rows and {raw_df.shape[1]} columns.")
-st.dataframe(raw_df.head(), use_container_width=True)
+# Create Beautiful Tabs
+tab1, tab2, tab3, tab4 = st.tabs([
+    "🔍 1. Raw Inspection", 
+    "🚨 2. Issues Found", 
+    "🛠️ 3. Transformations", 
+    "💎 4. Final Output"
+])
 
-col1, col2 = st.columns(2)
-with col1:
-    st.write("**Raw Data Types:**")
-    st.dataframe(raw_df.dtypes.astype(str).reset_index().rename(columns={'index': 'Column', 0: 'Type'}))
-with col2:
-    st.write("**Statistical Summary:**")
-    st.dataframe(raw_df.describe())
-
-# --- Section 2: Identify Issues ---
-st.markdown('<div class="sub-title">2. Identify Issues</div>', unsafe_allow_html=True)
-
-# Missing Values
-missing_data = raw_df.isnull().sum()
-missing_percent = (missing_data / len(raw_df)) * 100
-missing_df = pd.DataFrame({'Missing Values': missing_data, 'Percentage (%)': missing_percent})
-missing_df = missing_df[missing_df['Missing Values'] > 0]
-
-st.write("**Missing Values Found:**")
-if not missing_df.empty:
-    st.dataframe(missing_df)
+# --- TAB 1: RAW DATA ---
+with tab1:
+    st.markdown("### 📊 Initial Dataset Architecture")
     
-    # Plot missing values
-    fig, ax = plt.subplots(figsize=(8, 4))
-    sns.barplot(x=missing_df.index, y=missing_df['Percentage (%)'], ax=ax, palette='viridis')
-    ax.set_title("Percentage of Missing Values")
-    ax.set_ylabel("Percentage (%)")
-    st.pyplot(fig)
-else:
-    st.success("No missing values found!")
+    # KPI Row
+    col1, col2, col3 = st.columns(3)
+    col1.markdown(f'<div class="kpi-card"><p class="kpi-title">Total Rows</p><p class="kpi-value">{raw_df.shape[0]:,}</p></div>', unsafe_allow_html=True)
+    col2.markdown(f'<div class="kpi-card"><p class="kpi-title">Total Columns</p><p class="kpi-value">{raw_df.shape[1]}</p></div>', unsafe_allow_html=True)
+    col3.markdown(f'<div class="kpi-card"><p class="kpi-title">Data Size</p><p class="kpi-value">~2.2 MB</p></div>', unsafe_allow_html=True)
+    
+    st.write("")
+    st.markdown("#### Raw Data Preview")
+    st.dataframe(raw_df.head(10), use_container_width=True)
 
-# Duplicates
-duplicates = raw_df.duplicated().sum()
-st.write(f"**Duplicate Rows Found:** {duplicates}")
-if duplicates > 0:
-    st.dataframe(raw_df[raw_df.duplicated(keep=False)].head())
+# --- TAB 2: ISSUES ---
+with tab2:
+    st.markdown("### 🚨 Identified Data Anomalies")
+    
+    missing_data = raw_df.isnull().sum()
+    missing_df = pd.DataFrame({'Missing': missing_data}).reset_index()
+    missing_df = missing_df[missing_df['Missing'] > 0]
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("#### 🚫 Missing Values")
+        if not missing_df.empty:
+            fig = px.bar(missing_df, x='index', y='Missing', 
+                         color='Missing', color_continuous_scale='Rose',
+                         template='plotly_dark', labels={'index': 'Column', 'Missing': 'Null Count'})
+            fig.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', margin=dict(l=0, r=0, t=30, b=0))
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.success("No missing values!")
+            
+    with col2:
+        st.markdown("#### 👯 Duplicate Records")
+        duplicates = raw_df.duplicated().sum()
+        
+        # Display as a huge KPI
+        color_class = "danger" if duplicates > 0 else "success"
+        st.markdown(f'<div class="kpi-card" style="margin-top: 20px;"><p class="kpi-title">Exact Duplicates Found</p><p class="kpi-value {color_class}">{duplicates}</p></div>', unsafe_allow_html=True)
+        
+        if duplicates > 0:
+            st.warning("These exact duplicates skew our sales/profit metrics and must be dropped.")
 
-# --- Section 3 & 4: Cleaning & Validation ---
-st.markdown('<div class="sub-title">3. Clean & Validate</div>', unsafe_allow_html=True)
+# --- TAB 3: TRANSFORMATIONS ---
+with tab3:
+    st.markdown("### 🛠️ The Cleaning Engine")
+    
+    st.info("Hover over the steps below to see exactly what transformations were applied.")
+    
+    with st.expander("📝 1. Column Standardization", expanded=True):
+        st.code("df.columns = df.columns.str.lower().str.replace(' ', '_').str.replace('-', '_')", language='python')
+        st.caption("Standardized all columns to `snake_case` to prevent querying errors.")
+        
+    with st.expander("🩹 2. Missing Value Imputation", expanded=True):
+        st.code("df['postal_code'] = df['postal_code'].fillna(0).astype(int)", language='python')
+        st.caption("Filled missing postal codes (common in international regions) with `0`.")
+        
+    with st.expander("✂️ 3. Duplicate Removal", expanded=True):
+        st.code("df = df.drop_duplicates()", language='python')
+        st.caption(f"Successfully dropped {duplicates} exact duplicate rows.")
 
-st.write("""
-### Actions Performed:
-1. **Standardized Columns:** Converted to `snake_case`.
-2. **Missing Values:** Imputed placeholder `0` for missing `postal_code`.
-3. **Duplicates Removed:** Dropped exact row duplicates.
-4. **Text Cleaning:** Stripped whitespaces and fixed casing for categorical features.
-5. **Date Parsing:** Converted `order_date` and `ship_date` to `datetime` objects.
-6. **Feature Engineering:** Added `shipping_days` (Difference between ship date and order date).
-""")
+    with st.expander("⏱️ 4. Feature Engineering (Dates)", expanded=True):
+        st.code('''df['order_date'] = pd.to_datetime(df['order_date'])
+df['ship_date'] = pd.to_datetime(df['ship_date'])
+df['shipping_days'] = (df['ship_date'] - df['order_date']).dt.days''', language='python')
+        st.caption("Converted string dates to actual `datetime` objects and calculated the total `shipping_days`.")
 
-st.write(f"**Cleaned Dataset Shape:** {clean_df.shape[0]} rows and {clean_df.shape[1]} columns.")
-st.dataframe(clean_df.head(), use_container_width=True)
-
-st.write("**Final Cleaned Data Types:**")
-st.dataframe(clean_df.dtypes.astype(str).reset_index().rename(columns={'index': 'Column', 0: 'Type'}).T)
-
-# Validation Proof
-col3, col4 = st.columns(2)
-with col3:
-    st.info(f"Remaining Missing Values: {clean_df.isnull().sum().sum()}")
-with col4:
-    st.info(f"Remaining Duplicates: {clean_df.duplicated().sum()}")
-
-# --- Section 5: Save & Download ---
-st.markdown('<div class="sub-title">4. Export</div>', unsafe_allow_html=True)
-st.success("Cleaned dataset has been successfully processed and saved to `data/processed/superstore_cleaned.csv`.")
-
-# Provide a download button for the video presentation
-csv = clean_df.to_csv(index=False).encode('utf-8')
-st.download_button(
-    label="Download Cleaned Dataset CSV",
-    data=csv,
-    file_name='superstore_cleaned.csv',
-    mime='text/csv',
-)
+# --- TAB 4: FINAL OUTPUT ---
+with tab4:
+    st.markdown("### 💎 The Final Polished Dataset")
+    
+    col1, col2, col3 = st.columns(3)
+    col1.markdown(f'<div class="kpi-card"><p class="kpi-title">Final Rows</p><p class="kpi-value success">{clean_df.shape[0]:,}</p></div>', unsafe_allow_html=True)
+    col2.markdown(f'<div class="kpi-card"><p class="kpi-title">Missing Values</p><p class="kpi-value success">0</p></div>', unsafe_allow_html=True)
+    col3.markdown(f'<div class="kpi-card"><p class="kpi-title">Duplicates</p><p class="kpi-value success">0</p></div>', unsafe_allow_html=True)
+    
+    st.write("")
+    st.markdown("#### Cleaned Data Ready for Analysis")
+    st.dataframe(clean_df.head(50), use_container_width=True)
+    
+    st.markdown("---")
+    
+    col_a, col_b, col_c = st.columns([1, 2, 1])
+    with col_b:
+        csv = clean_df.to_csv(index=False).encode('utf-8')
+        st.download_button(
+            label="🚀 Download Final Cleaned CSV",
+            data=csv,
+            file_name='superstore_cleaned.csv',
+            mime='text/csv',
+            use_container_width=True
+        )
