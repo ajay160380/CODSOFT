@@ -35,31 +35,6 @@ graph TD
 * **Superstore Specifics:** If no file is uploaded, it defaults to the Superstore dataset, performing advanced feature engineering (e.g., calculating `shipping_days` from Dates).
 * **Interactive UI:** Built with premium glassmorphism CSS, offering a 4-tab workflow: Raw Inspection ➡️ Issues Found ➡️ Transformations ➡️ Final Output.
 
----
-
-## 📈 Task 3: Executive Visualization Dashboard
-
-*(Note: The code for Task 3 is kept locally for demonstration purposes)*
-
-The third task elevates the cleaned data into an **Interactive Executive Dashboard** that allows stakeholders to derive actionable insights instantly.
-
-### 🧠 Data Flow & Visualization
-
-```mermaid
-graph LR
-    A[(Cleaned Data)] --> B[Control Panel Filters]
-    B -->|Updates| C((KPI Metrics))
-    B -->|Updates| D((Plotly Charts))
-    
-    D -.-> E[Sales by Category]
-    D -.-> F[Profit vs Revenue Trend]
-    D -.-> G[Profitability Scatter Matrix]
-```
-
-### ✨ Key Features
-* **Dynamic Sidebar Controls:** Filter the entire dashboard in real-time by Region and Category.
-* **Advanced Visuals:** Utilizes highly customized Plotly Express charts with transparent backgrounds, zero gridlines, and custom fonts.
-* **Deep Analytics:** Features complex visualizations like Break-Even dashed lines on scatter plots to instantly spot loss-making products.
 
 ---
 <div align="center">
