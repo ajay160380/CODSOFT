@@ -2,5 +2,3 @@ venv/
 __pycache__/
 .ipynb_checkpoints/
 .DS_Store
-
-task3_visualization/
