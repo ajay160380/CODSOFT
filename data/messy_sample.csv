@@ -1,0 +1,11 @@
+Employee Name,Age,Salary,Department,Joining Date
+John Doe,28,55000,IT,2022-01-15
+Jane Smith,34,,HR,2021-03-22
+Mike Ross,,85000,Legal,
+John Doe,28,55000,IT,2022-01-15
+Rachel Zane,29,75000,,2020-05-10
+Harvey Specter,40,150000,Legal,2018-02-01
+Mike Ross,,85000,Legal,
+Louis Litt,42,120000,,
+,,,,,
+Jane Smith,34,,HR,2021-03-22
